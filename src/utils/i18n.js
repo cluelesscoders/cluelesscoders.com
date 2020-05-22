@@ -1,4 +1,5 @@
-import { supportedLanguages } from "./../../i18n";
+/* eslint-disable no-unused-expressions */
+import { supportedLanguages } from "../../i18n";
 import whitelist from "./whitelist";
 
 // This is kind of a mess for some languages.
@@ -72,6 +73,7 @@ export const createLanguageLink = (slug, lang) => {
 
 export const replaceAnchorLinksByLanguage = (html, code) => {
   // Match any link using https://regexr.com/4airl
+  // eslint-disable-next-line no-useless-escape
   const matches = html.match(/https?:\/\/(www)?[^\/\s)"?]+/gm);
 
   // Return same html if no matches were found
@@ -84,6 +86,7 @@ export const replaceAnchorLinksByLanguage = (html, code) => {
     // Replace to locale url if and only if exists in whitelist
     // and has code registered
     if (whitelist[url] && whitelist[url][code]) {
+      // eslint-disable-next-line no-param-reassign
       html = html.replace(url, whitelist[url][code]);
     }
   });

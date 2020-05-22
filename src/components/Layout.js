@@ -1,24 +1,31 @@
+/* eslint-disable no-underscore-dangle */
 import React from "react";
 import { Link } from "gatsby";
-import Toggle from "./Toggle";
 import { Helmet } from "react-helmet";
+import Toggle from "./Toggle";
 
 import { rhythm, scale } from "../utils/typography";
 import sun from "../assets/sun.png";
 import moon from "../assets/moon.png";
 
 export default class Layout extends React.Component {
-  state = {
-    theme: null,
-  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      theme: null,
+    };
+  }
+
   componentDidMount() {
     this.setState({ theme: window.__theme });
     window.__onThemeChange = () => {
       this.setState({ theme: window.__theme });
     };
   }
+
   renderHeader() {
     const { location, title } = this.props;
+    // eslint-disable-next-line no-undef
     const rootPath = `${__PATH_PREFIX__}/`;
 
     if (location.pathname === rootPath) {
@@ -36,39 +43,40 @@ export default class Layout extends React.Component {
               textDecoration: "none",
               color: "var(--textTitle)",
             }}
-            to={"/"}
+            to="/"
           >
             {title}
           </Link>
         </h1>
       );
-    } else {
-      return (
-        <h3
-          style={{
-            fontFamily: "Montserrat, sans-serif",
-            marginTop: 0,
-            marginBottom: 0,
-            height: 42, // because
-            lineHeight: "2.625rem",
-          }}
-        >
-          <Link
-            style={{
-              boxShadow: "none",
-              textDecoration: "none",
-              color: "rgb(255, 167, 196)",
-            }}
-            to={"/"}
-          >
-            {title}
-          </Link>
-        </h3>
-      );
     }
+    return (
+      <h3
+        style={{
+          fontFamily: "Montserrat, sans-serif",
+          marginTop: 0,
+          marginBottom: 0,
+          height: 42, // because
+          lineHeight: "2.625rem",
+        }}
+      >
+        <Link
+          style={{
+            boxShadow: "none",
+            textDecoration: "none",
+            color: "rgb(255, 167, 196)",
+          }}
+          to="/"
+        >
+          {title}
+        </Link>
+      </h3>
+    );
   }
+
   render() {
     const { children } = this.props;
+    const { theme } = this.state;
 
     return (
       <div
@@ -83,7 +91,7 @@ export default class Layout extends React.Component {
           meta={[
             {
               name: "theme-color",
-              content: this.state.theme === "light" ? "#ffa8c5" : "#282c35",
+              content: theme === "light" ? "#ffa8c5" : "#282c35",
             },
           ]}
         />
@@ -104,12 +112,13 @@ export default class Layout extends React.Component {
             }}
           >
             {this.renderHeader()}
-            {this.state.theme !== null ? (
+            {theme !== null ? (
               <Toggle
                 icons={{
                   checked: (
                     <img
                       src={moon}
+                      alt="moon"
                       width="16"
                       height="16"
                       role="presentation"
@@ -119,6 +128,7 @@ export default class Layout extends React.Component {
                   unchecked: (
                     <img
                       src={sun}
+                      alt="sun"
                       width="16"
                       height="16"
                       role="presentation"
@@ -126,7 +136,7 @@ export default class Layout extends React.Component {
                     />
                   ),
                 }}
-                checked={this.state.theme === "dark"}
+                checked={theme === "dark"}
                 onChange={(e) =>
                   window.__setPreferredTheme(
                     e.target.checked ? "dark" : "light"

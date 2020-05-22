@@ -9,12 +9,16 @@ module.exports = {
     Atomics: "readonly",
     SharedArrayBuffer: "readonly",
   },
+  parser: "babel-eslint",
   parserOptions: {
     ecmaFeatures: {
       jsx: true,
     },
     ecmaVersion: 11,
     sourceType: "module",
+    ecmaFeatures: {
+      experimentalObjectRestSpread: true,
+    },
   },
   plugins: ["react", "prettier"],
   rules: {
@@ -44,5 +48,6 @@ module.exports = {
       },
     ],
     "max-classes-per-file": ["error", 5],
+    "react/jsx-props-no-spreading": "off",
   },
 };

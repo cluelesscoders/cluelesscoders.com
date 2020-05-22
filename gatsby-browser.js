@@ -1,9 +1,12 @@
+/* eslint-disable no-plusplus */
 // gatsby-browser.js
 import React from "react";
 
 // Forked Gatsby default to not remount on switches between
 // translated versions of the same page.
-export function replaceComponentRenderer({ props, loader }) {
+// eslint-disable-next-line import/prefer-default-export
+export function replaceComponentRenderer({ props }) {
+  // eslint-disable-next-line react/destructuring-assignment
   return React.createElement(props.pageResources.component, {
     ...props,
 
@@ -51,8 +54,9 @@ function shouldPreserveScrollBetween(oldPathname, newPathname) {
 // Forked to not update scroll on transitions between translations.
 // Sadness. I have to override a *plugin* because it already has its own logic,
 // and Gatsby just ignores mine, lol. TODO: fork this plugin?
-let oldShouldUpdateScroll = require("gatsby-remark-autolink-headers/gatsby-browser")
+const oldShouldUpdateScroll = require("gatsby-remark-autolink-headers/gatsby-browser")
   .shouldUpdateScroll;
+
 if (typeof oldShouldUpdateScroll !== "function") {
   throw new Error("No monkeypatching today :-(");
 }
@@ -60,7 +64,7 @@ require("gatsby-remark-autolink-headers/gatsby-browser").shouldUpdateScroll = fu
   prevRouterProps,
   routerProps,
 }) {
-  const { pathname, hash } = routerProps.location;
+  const { pathname } = routerProps.location;
   if (prevRouterProps) {
     const {
       location: { pathname: oldPathname },
@@ -74,5 +78,6 @@ require("gatsby-remark-autolink-headers/gatsby-browser").shouldUpdateScroll = fu
   }
   // Call it manually so we have a chance to preserve scroll the line before.
   // TODO: maybe inline whatever it does.
+  // eslint-disable-next-line prefer-rest-params
   return oldShouldUpdateScroll.apply(this, arguments);
 };

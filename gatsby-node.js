@@ -1,7 +1,8 @@
+/* eslint-disable no-shadow */
+/* eslint-disable no-console */
 const _ = require("lodash");
 const Promise = require("bluebird");
 const path = require("path");
-const { createFilePath } = require("gatsby-source-filesystem");
 const { supportedLanguages } = require("./i18n");
 
 exports.createPages = ({ graphql, actions }) => {
@@ -92,6 +93,7 @@ exports.createPages = ({ graphql, actions }) => {
             const langKey = _.get(post, "node.fields.langKey");
 
             if (directoryName && langKey && langKey !== "en") {
+              // eslint-disable-next-line no-param-reassign
               (result[directoryName] || (result[directoryName] = [])).push(
                 langKey
               );
@@ -191,6 +193,7 @@ exports.onCreateNode = ({ node, actions }) => {
     // or that already link to translations.
     const markdown = node.internal.content;
     const maybeAbsoluteLinks = [];
+    // eslint-disable-next-line no-useless-escape
     const linkRe = /\]\((\/[^\)]+\/)\)/g;
     let match = linkRe.exec(markdown);
     while (match != null) {
