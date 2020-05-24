@@ -1,0 +1,29 @@
+- id: coolguy1990
+  twitter: 'KunalMangaraj'
+  name: 'Kunal Mangaraj'
+  status: '🍪 Happily coding away while munching on cookies'
+  image:
+    small: https://avatars2.githubusercontent.com/u/1255397?s=100
+    medium: https://avatars2.githubusercontent.com/u/1255397?s=300
+    large: https://avatars2.githubusercontent.com/u/1255397
+  website: 'https://github.com/coolguy1990'
+
+- id: john-e
+  twitter: 'engitprabhat'
+  name: 'Engit Prabhat'
+  status: '🎩 Code magician'
+  image:
+    small: https://avatars2.githubusercontent.com/u/5802221?s=100
+    medium: https://avatars2.githubusercontent.com/u/5802221?s=300
+    large: https://avatars2.githubusercontent.com/u/5802221
+  website: 'https://github.com/john-e'
+
+- id: abhishek-kaushik
+  twitter: Luq_kaushik
+  name: 'Abhishek Kaushik'
+  status: 'ONCE A RED ALWAYS A RED'
+  image:
+    small: https://avatars2.githubusercontent.com/u/1883835?s=100
+    medium: https://avatars2.githubusercontent.com/u/1883835?s=300
+    large: https://avatars2.githubusercontent.com/u/1883835
+  website: 'https://github.com/abhishek-kaushik'

@@ -7,37 +7,40 @@ import Bio from "../components/Bio";
 import Footer from "../components/Footer";
 import Layout from "../components/Layout";
 import Panel from "../components/Panel";
-// import SEO from "../components/SEO";
+import SEO from "../components/SEO";
 import { rhythm } from "../utils/typography";
 
 const BlogIndexTemplate = ({ pageContext, data, location }) => {
   const siteTitle = get(data, "site.siteMetadata.title");
+  const keywords = get(data, "site.siteMetadata.keywords");
   const { langKey } = pageContext;
 
   const posts = get(data, "allMarkdownRemark.edges");
 
   return (
     <Layout location={location} title={siteTitle}>
-      {/* <SEO /> */}
+      <SEO
+        pathname={location.pathname}
+        title={`${siteTitle} Blog`}
+        keywords={`${keywords}, blog`}
+      />
       <aside>
         <Bio />
-      </aside>{" "}
+      </aside>
       <main>
-        {" "}
         {langKey !== "en" && langKey !== "ru" && (
           <Panel>
-            These articles have been{" "}
+            These articles have been
             <a
-              href="https://github.com/gaearon/overreacted.io#contributing-translations"
+              href="https://github.com/cluelesscoders/cluelesscoders.com#contributing-translations"
               target="_blank"
               rel="noopener noreferrer"
             >
-              translated by the community{" "}
+              translated by the community
             </a>
-            .{" "}
+            .
           </Panel>
         )}
-        s{" "}
         {posts.map(({ node }) => {
           const title = get(node, "frontmatter.title") || node.fields.slug;
           return (
@@ -54,29 +57,27 @@ const BlogIndexTemplate = ({ pageContext, data, location }) => {
                     style={{
                       boxShadow: "none",
                     }}
-                    to={node.fields.slug}
+                    to={`/blog${node.fields.slug}`}
                     rel="bookmark"
                   >
-                    {" "}
-                    {title}{" "}
-                  </Link>{" "}
-                </h3>{" "}
+                    {title}
+                  </Link>
+                </h3>
                 <small>
-                  {" "}
-                  {formatPostDate(node.frontmatter.date, langKey)}{" "}
-                  {` • ${formatReadingTime(node.timeToRead)}`}{" "}
-                </small>{" "}
-              </header>{" "}
+                  {formatPostDate(node.frontmatter.date, langKey)}
+                  {` • ${formatReadingTime(node.timeToRead)}`}
+                </small>
+              </header>
               <p
                 // eslint-disable-next-line react/no-danger
                 dangerouslySetInnerHTML={{
                   __html: node.frontmatter.spoiler,
                 }}
-              />{" "}
+              />
             </article>
           );
-        })}{" "}
-      </main>{" "}
+        })}
+      </main>
       <Footer />
     </Layout>
   );
@@ -90,6 +91,7 @@ export const pageQuery = graphql`
       siteMetadata {
         title
         description
+        keywords
       }
     }
     allMarkdownRemark(

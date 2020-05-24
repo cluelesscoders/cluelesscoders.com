@@ -8,35 +8,13 @@ const { supportedLanguages } = require("./i18n");
 exports.createPages = ({ graphql, actions }) => {
   const { createPage } = actions;
 
-  // // Oops
-  // createRedirect({
-  //   fromPath: "/zh_TW/things-i-dont-know-as-of-2018/",
-  //   toPath: "/zh-hant/things-i-dont-know-as-of-2018/",
-  //   isPermanent: true,
-  //   redirectInBrowser: true,
-  // });
-  // // Oops 2
-  // createRedirect({
-  //   fromPath: "/not-everything-should-be-a-hook/",
-  //   toPath: "/why-isnt-x-a-hook/",
-  //   isPermanent: true,
-  //   redirectInBrowser: true,
-  // });
-  // // Oops 3
-  // createRedirect({
-  //   fromPath: "/making-setinterval-play-well-with-react-hooks/",
-  //   toPath: "/making-setinterval-declarative-with-react-hooks/",
-  //   isPermanent: true,
-  //   redirectInBrowser: true,
-  // });
-
   return new Promise((resolve, reject) => {
     const blogPost = path.resolve("./src/templates/blog-post.js");
 
     // Create index pages for all supported languages
     Object.keys(supportedLanguages).forEach((langKey) => {
       createPage({
-        path: langKey === "en" ? "/" : `/${langKey}/`,
+        path: langKey === "en" ? "/blog" : `/blog/${langKey}/`,
         component: path.resolve("./src/templates/blog-index.js"),
         context: {
           langKey,
@@ -58,7 +36,6 @@ exports.createPages = ({ graphql, actions }) => {
                     slug
                     langKey
                     directoryName
-                    maybeAbsoluteLinks
                   }
                   frontmatter {
                     title
@@ -119,7 +96,7 @@ exports.createPages = ({ graphql, actions }) => {
             [];
 
           createPage({
-            path: post.node.fields.slug,
+            path: `blog${post.node.fields.slug}`,
             component: blogPost,
             context: {
               slug: post.node.fields.slug,
@@ -140,27 +117,27 @@ exports.createPages = ({ graphql, actions }) => {
             // Record which links to internal posts have translated versions
             // into this language. We'll replace them before rendering HTML.
             const translatedLinks = [];
-            const { langKey, maybeAbsoluteLinks } = post.node.fields;
-            maybeAbsoluteLinks.forEach((link) => {
-              if (allSlugs.has(link)) {
-                if (allSlugs.has(`/${langKey}${link}`)) {
-                  // This is legit an internal post link,
-                  // and it has been already translated.
-                  translatedLinks.push(link);
-                } else if (link.startsWith(`/${langKey}/`)) {
-                  console.log("-----------------");
-                  console.error(
-                    `It looks like "${langKey}" translation of "${post.node.frontmatter.title}" ` +
-                      `is linking to a translated link: ${link}. Don't do this. Use the original link. ` +
-                      `The blog post renderer will automatically use a translation if it is available.`
-                  );
-                  console.log("-----------------");
-                }
-              }
-            });
+            // const { langKey, maybeAbsoluteLinks } = post.node.fields;
+            // maybeAbsoluteLinks.forEach((link) => {
+            //   if (allSlugs.has(link)) {
+            //     if (allSlugs.has(`/${langKey}${link}`)) {
+            //       // This is legit an internal post link,
+            //       // and it has been already translated.
+            //       translatedLinks.push(link);
+            //     } else if (link.startsWith(`/${langKey}/`)) {
+            //       console.log("-----------------");
+            //       console.error(
+            //         `It looks like "${langKey}" translation of "${post.node.frontmatter.title}" ` +
+            //           `is linking to a translated link: ${link}. Don't do this. Use the original link. ` +
+            //           `The blog post renderer will automatically use a translation if it is available.`
+            //       );
+            //       console.log("-----------------");
+            //     }
+            //   }
+            // });
 
             createPage({
-              path: post.node.fields.slug,
+              path: `blog${post.node.fields.slug}`,
               component: blogPost,
               context: {
                 slug: post.node.fields.slug,
@@ -175,7 +152,7 @@ exports.createPages = ({ graphql, actions }) => {
   });
 };
 
-exports.onCreateNode = ({ node, actions }) => {
+exports.onCreateNode = ({ node, getNode, actions }) => {
   const { createNodeField } = actions;
 
   if (_.get(node, "internal.type") === `MarkdownRemark`) {
@@ -205,5 +182,13 @@ exports.onCreateNode = ({ node, actions }) => {
       name: "maybeAbsoluteLinks",
       value: _.uniq(maybeAbsoluteLinks),
     });
+
+    if (node.internal.type === "MarkdownRemark") {
+      createNodeField({
+        node,
+        name: "modifiedTime",
+        value: getNode(node.parent).mtime,
+      });
+    }
   }
 };

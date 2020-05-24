@@ -1,20 +1,34 @@
+const { formatAuthorNames } = require("./src/utils/helpers");
+
 module.exports = {
   siteMetadata: {
-    title: "Overreacted",
-    author: "Dan Abramov",
-    description: "Personal blog by Dan Abramov. I explain with words and code.",
-    siteUrl: "https://overreacted.io",
+    title: "Clueless Coders",
+    author: "Cluelesscoders",
+    description:
+      "Team Blog of CluelessCoders, where a few nerds blog hopped up on coffee and game",
+    siteUrl: "https://cluelesscoders.com",
     social: {
-      twitter: "@dan_abramov",
+      twitter: "@CluelessCoders",
+      github: "https://github.com/cluelesscoders/",
     },
+    keywords: "clueless, coders, coding, github",
   },
   pathPrefix: "/",
   plugins: [
+    `gatsby-plugin-styled-components`,
+    `gatsby-plugin-offline`,
     {
       resolve: `gatsby-source-filesystem`,
       options: {
-        path: `${__dirname}/src/pages`,
-        name: "pages",
+        path: `${__dirname}/src/content/blog`,
+        name: "blog",
+      },
+    },
+    {
+      resolve: `gatsby-source-filesystem`,
+      options: {
+        path: `${__dirname}/src/content/assets`,
+        name: `assets`,
       },
     },
     {
@@ -53,12 +67,12 @@ module.exports = {
     },
     `gatsby-transformer-sharp`,
     `gatsby-plugin-sharp`,
-    {
-      resolve: `gatsby-plugin-google-analytics`,
-      options: {
-        trackingId: `UA-130227707-1`,
-      },
-    },
+    // {
+    //   resolve: `gatsby-plugin-google-analytics`,
+    //   options: {
+    //     trackingId: `UA-130227707-1`,
+    //   },
+    // },
     {
       resolve: `gatsby-plugin-feed`,
       options: {
@@ -80,7 +94,7 @@ module.exports = {
               return allMarkdownRemark.edges.map((edge) => {
                 const { siteUrl } = site.siteMetadata;
                 const postText = `
-                <div style="margin-top=55px; font-style: italic;">(This is an article posted to my blog at overreacted.io. You can read it online by <a href="${
+                <div style="margin-top=55px; font-style: italic;">(This is an article posted to my blog at cluelesscoder.com. You can read it online by <a href="${
                   siteUrl + edge.node.fields.slug
                 }">clicking here</a>.)</div>
               `;
@@ -99,6 +113,10 @@ module.exports = {
                   date: edge.node.frontmatter.date,
                   url: site.siteMetadata.siteUrl + edge.node.fields.slug,
                   guid: site.siteMetadata.siteUrl + edge.node.fields.slug,
+                  author: formatAuthorNames(
+                    edge.node.frontmatter.authors,
+                    false
+                  ),
                   custom_elements: [
                     {
                       "content:encoded": html + postText,
@@ -125,6 +143,9 @@ module.exports = {
                         title
                         date
                         spoiler
+                        authors {
+                          name
+                        }
                       }
                     }
                   }
@@ -132,7 +153,7 @@ module.exports = {
               }
             `,
             output: "/rss.xml",
-            title: "Dan Abramov's Overreacted Blog RSS Feed",
+            title: "Clueless Coder Blog RSS Feed",
           },
         ],
       },
@@ -140,7 +161,7 @@ module.exports = {
     {
       resolve: `gatsby-plugin-ebook`,
       options: {
-        filename: "overreacted-ebook.epub",
+        filename: "cluelesscoder-ebook.epub",
         query: `
           {
             site {
@@ -171,13 +192,13 @@ module.exports = {
     {
       resolve: `gatsby-plugin-manifest`,
       options: {
-        name: `Overreacted`,
-        short_name: `Overreacted`,
+        name: `CluelessCoder`,
+        short_name: `CluelessCoder`,
         start_url: `/`,
         background_color: `#ffffff`,
         theme_color: `#ffa7c4`,
         display: `minimal-ui`,
-        icon: `src/assets/icon.png`,
+        icon: `src/content/assets/icon.png`,
         theme_color_in_head: false,
       },
     },
@@ -193,8 +214,20 @@ module.exports = {
       options: {
         langKeyDefault: "en",
         useLangKeyLayout: false,
+        pagesPaths: ["content/blog/"],
       },
     },
     `gatsby-plugin-catch-links`,
+    `gatsby-transformer-yaml`,
+    {
+      resolve: "gatsby-source-filesystem",
+      options: {
+        name: "mappings",
+        path: `${__dirname}/src/content/mappings`,
+      },
+    },
   ],
+  mapping: {
+    "MarkdownRemark.frontmatter.authors": `MembersYaml`,
+  },
 };

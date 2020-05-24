@@ -5,9 +5,13 @@ import get from "lodash/get";
 import "../fonts/fonts-post.css";
 import Bio from "../components/Bio";
 import Layout from "../components/Layout";
-// import SEO from "../components/SEO";
+import SEO from "../components/SEO";
 import Panel from "../components/Panel";
-import { formatPostDate, formatReadingTime } from "../utils/helpers";
+import {
+  formatAuthorNames,
+  formatReadingTime,
+  showCreatedOrModifiedAt,
+} from "../utils/helpers";
 import { rhythm, scale } from "../utils/typography";
 import {
   codeToLanguage,
@@ -16,8 +20,8 @@ import {
   replaceAnchorLinksByLanguage,
 } from "../utils/i18n";
 
-const GITHUB_USERNAME = "gaearon";
-const GITHUB_REPO_NAME = "overreacted.io";
+const GITHUB_USERNAME = "cluelesscoders";
+const GITHUB_REPO_NAME = "cluelesscoders.com";
 const systemFont = `system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
     "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans",
     "Droid Sans", "Helvetica Neue", sans-serif`;
@@ -128,17 +132,21 @@ const BlogPostTemplate = ({ data, pageContext, location }) => {
     enSlug.length - 1
   )}/index${lang === "en" ? "" : `.${lang}`}.md`;
   const discussUrl = `https://mobile.twitter.com/search?q=${encodeURIComponent(
-    `https://overreacted.io${enSlug}`
+    `https://cluelesscoders.com${enSlug}`
   )}`;
 
   return (
     <Layout location={location} title={siteTitle}>
-      {/* <SEO
-          lang={lang}
-          title={post.frontmatter.title}
-          description={post.frontmatter.spoiler}
-          slug={post.fields.slug}
-        /> */}
+      <SEO
+        lang={lang}
+        title={post.frontmatter.title}
+        description={post.frontmatter.spoiler}
+        slug={post.fields.slug}
+        pathname={`/blog${post.fields.slug}`}
+        authors={post.frontmatter.authors}
+        modifiedAt={post.fields.modifiedAt}
+        createdAt={post.frontmatter.createdAt}
+      />
       <main>
         <article>
           <header>
@@ -153,8 +161,14 @@ const BlogPostTemplate = ({ data, pageContext, location }) => {
                 marginTop: rhythm(-4 / 5),
               }}
             >
-              {formatPostDate(post.frontmatter.date, lang)}
+              {`${showCreatedOrModifiedAt(
+                post.frontmatter.date,
+                post.fields.modifiedAt,
+                lang
+              )}`}
               {` • ${formatReadingTime(post.timeToRead)}`}
+              {post.frontmatter.authors &&
+                ` • Written by ${formatAuthorNames(post.frontmatter.authors)}`}
             </p>
             {translations.length > 0 && (
               <Translations
@@ -200,10 +214,10 @@ const BlogPostTemplate = ({ data, pageContext, location }) => {
             }}
             to="/"
           >
-            Overreacted
+            Clueless Coders
           </Link>
         </h3>
-        <Bio />
+        <Bio authors={post.frontmatter.authors} />
         <nav>
           <ul
             style={{
@@ -217,7 +231,7 @@ const BlogPostTemplate = ({ data, pageContext, location }) => {
             <li>
               {previous && (
                 <Link
-                  to={previous.fields.slug}
+                  to={`/blog${previous.fields.slug}`}
                   rel="prev"
                   style={{ marginRight: 20 }}
                 >
@@ -227,7 +241,7 @@ const BlogPostTemplate = ({ data, pageContext, location }) => {
             </li>
             <li>
               {next && (
-                <Link to={next.fields.slug} rel="next">
+                <Link to={`/blog${next.fields.slug}`} rel="next">
                   {next.frontmatter.title} →
                 </Link>
               )}
@@ -257,11 +271,21 @@ export const pageQuery = graphql`
         title
         date(formatString: "MMMM DD, YYYY")
         spoiler
-        cta
+        createdAt: date
+        authors {
+          name
+          status
+          website
+          image {
+            small
+          }
+        }
       }
       fields {
         slug
         langKey
+        modifiedTime: modifiedTime(formatString: "MMMM DD, YYYY")
+        modifiedAt: modifiedTime
       }
     }
   }
