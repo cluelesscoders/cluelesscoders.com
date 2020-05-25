@@ -87,6 +87,11 @@ body:lang(ko) article {
   word-break: keep-all;
 }
 
+.profile-pics {
+  position: relative;
+  display: inline-table;
+}
+
 /**
    * Based on copypasta from Remy Bach and Sarah Drasner
    */
